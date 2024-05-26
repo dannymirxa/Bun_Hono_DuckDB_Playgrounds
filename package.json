@@ -1,0 +1,17 @@
+{
+  "name": "ts_playground",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "duckdb-async": "^0.10.2",
+    "hono": "^4.3.7",
+    "libsql": "^0.3.18",
+    "zod": "^3.23.8"
+  }
+}
