@@ -12,17 +12,17 @@ def main():
         pl.col("update_ts").str.to_datetime("%Y-%m-%d %H:%M:%S")
     ])
 
-    df = df.with_columns([
-        pl.col("post_code").str.extract(r"(\d+)", 1).cast(pl.Int64)
-    ])
+    # df = df.with_columns([
+    #     pl.col("post_code").str.extract(r"(\d+)", 1).cast(pl.Int64)
+    # ])
 
     df = df.with_columns([
         pl.col("contact_phone").str.extract(r"(\d+)", 1).cast(pl.Int64).alias("contact_phone_int")
     ], )
 
     df = df.with_columns([
-        pl.when(pl.col("converted_to_sales") == "no").then(0).otherwise(1).alias("converted_to_sales_bool").cast(pl.Int8),
-        pl.when(pl.col("is_lead_deleted") == "no").then(0).otherwise(1).alias("is_lead_deleted_bool").cast(pl.Int8)
+        pl.when(pl.col("converted_to_sales") == "no").then(False).otherwise(True).alias("converted_to_sales_bool").cast(pl.Boolean),
+        pl.when(pl.col("is_lead_deleted") == "no").then(False).otherwise(True).alias("is_lead_deleted_bool").cast(pl.Boolean)
     ])
 
     df = df.drop(["contact_phone", "converted_to_sales", "is_lead_deleted"])
@@ -31,6 +31,14 @@ def main():
                     "converted_to_sales_bool": "converted_to_sales",
                     "is_lead_deleted_bool": "is_lead_deleted"
                     })
+    
+    df = df.with_columns([
+        pl.col("contact_phone").cast(pl.Utf8),
+        pl.col("post_code").cast(pl.Utf8)
+    ])
+    
+    df = df.with_columns(pl.col('countrycode').str.to_uppercase())
+
     df_json_dict = json.dumps(df.write_json(row_oriented=True))
 
     # print(json.loads(df_json_dict))
@@ -53,13 +61,17 @@ def main():
         #     print(f"failed to insert json {i}")
 
     # response = requests.post(url, json=df_json_dict)
+
     
 
     for row in df_json:
+        # Send a POST request to the API
+        
         # Convert the row to JSON
         data = json.dumps(row)
-        
-        # Send a POST request to the API
+
+        print(data)
+
         response = requests.post(url, data=data)
 
         # Check the status of the request

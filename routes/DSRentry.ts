@@ -57,7 +57,7 @@ const DSRentry = new Hono()
 
 /* CREATE TABLE DSR (
     countrycode TEXT,
-    id INTEGER,
+    id INTEGER PRIMARY KEY,
     le_code TEXT,
     distributor_code TEXT,
     distributor_name TEXT,
